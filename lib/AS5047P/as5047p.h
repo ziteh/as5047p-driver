@@ -1,6 +1,8 @@
 /**
  * @file as5047p.h
  * @author ZiTe (honmonoh@gmail.com)
+ * @brief  A library for AMS AS5047P rotary position sensor/magnetic encoder.
+ * @copyright MIT License, Copyright (c) 2022 ZiTe
  * @remark AS5047P SPI Interface:
  *         - Mode=1(CPOL=0, CPHA=1).
  *             - CPOL=0 --> Clock is low when idle.
@@ -10,6 +12,7 @@
  *         - Bit order is MSB first.
  *         - Max clock rates up to 10 MHz.
  *         - Only supports slave operation mode.
+ * 
  */
 
 #ifndef __AS5047P_H

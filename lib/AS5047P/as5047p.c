@@ -1,6 +1,9 @@
 /**
  * @file as5047p.c
  * @author ZiTe (honmonoh@gmail.com)
+ * @brief  A library for AMS AS5047P rotary position sensor/magnetic encoder.
+ * @copyright MIT License, Copyright (c) 2022 ZiTe
+ * 
  */
 
 #include "as5047p.h"
