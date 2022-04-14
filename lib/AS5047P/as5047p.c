@@ -21,7 +21,7 @@ __attribute__((weak)) void as5047p_spi_send(uint16_t data)
            it can be implemented in the user file.
 
      EXAMPLE:
-     HAL_SPI_Transmit(&hspi1, (u_int8_t *)&data, 1, HAL_MAX_DELAY);
+     HAL_SPI_Transmit(&hspi1, (uint8_t *)&data, 1, HAL_MAX_DELAY);
    */
 }
 

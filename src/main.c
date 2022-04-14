@@ -61,7 +61,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void as5047p_spi_send(uint16_t data)
 {
-  HAL_SPI_Transmit(&hspi1, (u_int8_t *)&data, 1, HAL_MAX_DELAY);
+  HAL_SPI_Transmit(&hspi1, (uint8_t *)&data, 1, HAL_MAX_DELAY);
 }
 
 uint16_t as5047p_spi_read(void)
