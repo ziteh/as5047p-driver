@@ -1,5 +1,7 @@
 # AS5047P Library
 
+A library for AMS AS5047P rotary position sensor/magnetic encoder.
+
 - `as5047p.c`
 - `as5047p.h`
 - `README.md` (*This file*)
