@@ -14,7 +14,7 @@
 - Max clock rates up to 10 MHz.
 - Only supports slave operation mode.
 
-## Note
+## Usage
 
 There are some functions that must be implemented in the user file(e.g. `main.c`).
 
