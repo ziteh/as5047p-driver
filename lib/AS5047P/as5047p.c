@@ -3,13 +3,14 @@
  * @author ZiTe (honmonoh@gmail.com)
  * @brief  A library for AMS AS5047P rotary position sensor/magnetic encoder.
  * @copyright MIT License, Copyright (c) 2022 ZiTe
- * 
+ *
  */
 
 #include "as5047p.h"
 
 #define BIT_MODITY(src, n, val) ((src) ^= (-(val) ^ (src)) & (1UL << (n)))
 #define BIT_READ(src, n) (((src) >> (n)&1U))
+#define BIT_TOGGLE(src, n) ((src) ^= 1UL << (n))
 
 bool is_even_parity(uint16_t data);
 void as5047p_spi_transmit(uint16_t data);
@@ -59,22 +60,15 @@ __attribute__((weak)) void as5047p_spi_deselect(void)
 
 void as5047p_send_command(bool is_read_cmd, uint16_t address)
 {
-  uint16_t frame = 0x0000;
+  uint16_t frame = address & 0x3FFF;
 
   /* R/W: 0 for write, 1 for read. */
   BIT_MODITY(frame, 14, is_read_cmd ? 1 : 0);
 
-  /* Address to read or write. */
-  for (int i = 0; i < 14; i++)
-  {
-    uint8_t bit = BIT_READ(address, i);
-    BIT_MODITY(frame, i, bit);
-  }
-
   /* Parity bit(even) calculated on the lower 15 bits. */
   if (!is_even_parity(frame))
   {
-    BIT_MODITY(frame, 15, 1);
+    BIT_TOGGLE(frame, 15);
   }
 
   as5047p_spi_transmit(frame);
@@ -82,25 +76,18 @@ void as5047p_send_command(bool is_read_cmd, uint16_t address)
 
 void as5047p_send_data(uint16_t address, uint16_t data)
 {
-  as5047p_send_command(false, address);
-
-  uint16_t frame = 0x0000;
+  uint16_t frame = data & 0x3FFF;
 
   /* Data frame bit 14 always low(0). */
-
-  /* Data. */
-  for (int i = 0; i < 14; i++)
-  {
-    uint8_t bit = BIT_READ(data, i);
-    BIT_MODITY(frame, i, bit);
-  }
+  BIT_MODITY(frame, 14, 0);
 
   /* Parity bit(even) calculated on the lower 15 bits. */
   if (!is_even_parity(frame))
   {
-    BIT_MODITY(frame, 15, 1);
+    BIT_TOGGLE(frame, 15);
   }
 
+  as5047p_send_command(false, address);
   as5047p_spi_transmit(frame);
 }
 
