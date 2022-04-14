@@ -26,9 +26,9 @@ Take NUCLEO-F446RE Board for example.
 PlatformIO
 
 ## AS5047P SPI Interface
-- Mode=1(CPOL=0, CPHA=1).
-    - CPOL=0 --> Clock is low when idle.
-    - CPHA=1 --> Data is sampled on the second edge(falling edge).
+- SPI Mode=1 (CPOL=0, CPHA=1).
+    - Clock is low when idle.
+    - Data is sampled on the second edge(i.e. falling edge).
 - CSn(chip select) active low.
 - Data size=16-bit.
 - Bit order is MSB first.
