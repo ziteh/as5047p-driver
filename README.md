@@ -1,6 +1,6 @@
-# STM32 AS5047P Example
+# AS5047P Driver
 
-- AS5047P code: [lib/AS5047P/](/lib/AS5047P/)
+- AS5047P library: [lib/AS5047P/](/lib/AS5047P/)
 - Example code: [src/main.c](/src/main.c)
 
 ## Usage
