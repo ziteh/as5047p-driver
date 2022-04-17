@@ -12,7 +12,7 @@
  *         - Bit order is MSB first.
  *         - Max clock rates up to 10 MHz.
  *         - Only supports slave operation mode.
- * 
+ *
  */
 
 #ifndef __AS5047P_H
@@ -41,6 +41,12 @@ extern "C"
 #define AS5047P_SETTINGS1 ((uint16_t)0x0018)
 #define AS5047P_SETTINGS2 ((uint16_t)0x0019)
 
+#define AS5047P_STEEINGS1_DEFAULT ((uint8_t)0x00000001)
+#define AS5047P_STEEINGS2_DEFAULT ((uint8_t)0x00000000)
+
+/* t_CSn: High time of CSn between two transmissions, Min: 350 ns. */
+#define T_CSN_DELAY (5)
+
   void as5047p_spi_send(uint16_t data);
   uint16_t as5047p_spi_read(void);
   void as5047p_spi_select(void);
@@ -50,9 +56,11 @@ extern "C"
   void as5047p_send_data(uint16_t address, uint16_t data);
   uint16_t as5047p_read_data(uint16_t address);
 
-  int as5047p_init(void);
+  int as5047p_init(uint8_t settings1, uint8_t settings2);
   int as5047p_get_angle(bool with_daec, float *angle_degree);
-  void as5047p_set_zero(void);
+  void as5047p_set_zero(uint16_t position);
+
+  void as5047p_nop(void);
 
 #ifdef __cplusplus
 }

@@ -39,15 +39,18 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
 
-  as5047p_init();
+  as5047p_init(0b00100101, 0b00000000);
+  as5047p_set_zero(0);
+
   printf("\r\nSTM32-AS5047P, Ready\r\n");
+
   while (1)
   {
     /* Measured angle without dynamic angle error compensation. */
-    uint16_t data = as5047p_read_data(AS5047P_ANGLEUNC) & 0x3FFF;
+    uint16_t pos = as5047p_read_data(AS5047P_ANGLEUNC) & 0x3FFF;
 
-    printf("Angle: %3i, Raw: %5i\r\n", (data * 360 / 0x3FFF), data);
-    HAL_Delay(1000);
+    printf("Angle: %3i, Raw: %5i\r\n", (pos * 359 / 0x3FFF), pos);
+    HAL_Delay(200);
   }
 }
 
@@ -55,7 +58,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if (GPIO_Pin == B1_Pin)
   {
-    as5047p_set_zero();
+    uint16_t position = as5047p_read_data(AS5047P_ANGLEUNC) & 0x3FFF;
+    as5047p_set_zero(position);
   }
 }
 

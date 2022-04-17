@@ -15,6 +15,7 @@
 bool is_even_parity(uint16_t data);
 void as5047p_spi_transmit(uint16_t data);
 uint16_t as5047p_spi_receive(void);
+void delay(volatile uint16_t t);
 
 __attribute__((weak)) void as5047p_spi_send(uint16_t data)
 {
@@ -98,10 +99,17 @@ uint16_t as5047p_read_data(uint16_t address)
   return received_data;
 }
 
-int as5047p_init(void)
+int as5047p_init(uint8_t settings1, uint8_t settings2)
 {
-  as5047p_send_data(AS5047P_SETTINGS1, 0x0001);
-  as5047p_send_data(AS5047P_SETTINGS2, 0x0000);
+  /* SETTINGS1 bit 0 --> Factory Setting: Pre-Programmed to 1. */
+  BIT_MODITY(settings1, 0, 1);
+
+  /* SETTINGS1 bit 1 --> Not Used: Pre-Programmed to 0, must not be overwritten. */
+  BIT_MODITY(settings1, 1, 0);
+
+  as5047p_send_data(AS5047P_SETTINGS1, (uint16_t)(settings1 & 0x00FF));
+  as5047p_send_data(AS5047P_SETTINGS2, (uint16_t)(settings2 & 0x00FF));
+
   if (as5047p_read_data(AS5047P_ERRFL) != 0)
   {
     return -1; /* Error occurred. */
@@ -126,25 +134,36 @@ int as5047p_get_angle(bool with_daec, float *angle_degree)
   uint16_t data = as5047p_read_data(address);
   if (BIT_READ(data, 14) == 0)
   {
-    *angle_degree = (data & 0x3FFF) * (360.0 / 0x3FFF);
+    /* Angle in degree = value * ( 360 / 2^14). */
+    *angle_degree = (data & 0x3FFF) * (360.0 / 0x4000);
     return 0; /* No error occurred. */
   }
   return -1; /* Error occurred. */
 }
 
-void as5047p_set_zero(void)
+void as5047p_set_zero(uint16_t position)
 {
-  uint16_t present_position = as5047p_read_data(AS5047P_ANGLEUNC);
-
-  /*  8 most significant bits of the zero position. */
-  as5047p_send_data(AS5047P_ZPOSM, ((present_position >> 6) & 0x00FF));
+  /* 8 most significant bits of the zero position. */
+  as5047p_send_data(AS5047P_ZPOSM, ((position >> 6) & 0x00FF));
 
   /* 6 least significant bits of the zero position. */
-  as5047p_send_data(AS5047P_ZPOSL, (present_position & 0x003F));
+  as5047p_send_data(AS5047P_ZPOSL, (position & 0x003F));
+
+  as5047p_nop();
+}
+
+inline void as5047p_nop(void)
+{
+  /*
+   * Reading the NOP register is equivalent to a nop (no operation)
+   * instruction for the AS5047P.
+   */
+  as5047p_send_command(true, AS5047P_NOP);
 }
 
 void as5047p_spi_transmit(uint16_t data)
 {
+  delay(T_CSN_DELAY);
   as5047p_spi_select();
   as5047p_spi_send(data);
   as5047p_spi_deselect();
@@ -152,10 +171,19 @@ void as5047p_spi_transmit(uint16_t data)
 
 uint16_t as5047p_spi_receive(void)
 {
+  delay(T_CSN_DELAY);
   as5047p_spi_select();
   uint16_t data = as5047p_spi_read();
   as5047p_spi_deselect();
   return data;
+}
+
+void delay(volatile uint16_t t)
+{
+  while (t--)
+  {
+    __asm__("nop"); /* Do nothing. */
+  }
 }
 
 bool is_even_parity(uint16_t data)
