@@ -10,6 +10,8 @@ A library for [ams AS5047P](https://ams.com/as5047p) rotary position sensor/magn
 
 ## Usage
 
+[STM32 Example](https://github.com/ziteh/as5047p_example)
+
 There are some functions that must be implemented in the user file (e.g. `main.c`).
 
 Take STM32 HAL for example:
@@ -38,11 +40,6 @@ void as5047p_spi_deselect(void)
   HAL_GPIO_WritePin(AS5047P_SS_GPIO_Port, AS5047P_SS_Pin, GPIO_PIN_SET);
 }
 ```
-
-
-## Example
-
-[STM32 Example](https://github.com/ziteh/as5047p_example)
 
 
 ## AS5047P SPI Interface
