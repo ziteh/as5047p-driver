@@ -10,7 +10,7 @@ A library for [ams AS5047P](https://ams.com/as5047p) rotary position sensor/magn
 
 ## Usage
 
-[STM32 Example](https://github.com/ziteh/as5047p_example)
+[STM32 Example](https://github.com/ziteh/as5047p-example)
 
 There are some functions that must be implemented in the user file (e.g. `main.c`).
 
