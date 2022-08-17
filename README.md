@@ -1,4 +1,4 @@
-# AS5047P Library
+# AS5047P Driver
 
 A library for [ams AS5047P](https://ams.com/as5047p) rotary position sensor/magnetic encoder.
 
