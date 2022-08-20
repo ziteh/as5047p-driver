@@ -1,7 +1,7 @@
 /**
  * @file as5047p.h
  * @author ZiTe (honmonoh@gmail.com)
- * @brief  A library for ams AS5047P rotary position sensor/magnetic encoder.
+ * @brief  A library for AMS AS5047P rotary position sensor/magnetic encoder.
  * @copyright MIT License, Copyright (c) 2022 ZiTe
  * @remark AS5047P SPI Interface:
  *         - Mode=1(CPOL=0, CPHA=1).
