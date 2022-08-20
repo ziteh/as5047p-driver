@@ -1,29 +1,24 @@
-# AS5047P Library
+# AS5047P Driver
+A library for [ams AS5047P](https://ams.com/as5047p) rotary position sensor/magnetic encoder.
 
-A library for AMS AS5047P rotary position sensor/magnetic encoder.
-
-- `as5047p.c`
-- `as5047p.h`
-- `README.md` (*This file*)
-
-
-## AS5047P SPI Interface
-
-- Mode = 1 (CPOL = 0, CPHA = 1).
-    - Clock is low when idle.
-    - Data is sampled on the second edge(i.e. falling edge).
-- CSn(chip select) active low.
-- Data size is 16-bit.
-- Bit order is MSB first.
-- Max clock rates up to 10 MHz.
-- Only supports slave operation mode.
+- `src/`: Main code.
+  - [`as5047p.c`](./src/as5047p.c)
+  - [`as5047p.h`](./src/as5047p.h)
+- `examples/`: Some examples of this library.
+  - [`stm32_hal/`](./examples/stm32_hal/)
+- `LICENSE`
+- `README.md` (*this file*)
 
 ## Usage
+The following functions that must be implemented in the user file (e.g. `main.c`).
+```c
+void as5047p_spi_send(uint16_t data);
+uint16_t as5047p_spi_read(void);
+void as5047p_spi_select(void);
+void as5047p_spi_deselect(void);
+```
 
-There are some functions that must be implemented in the user file(e.g. `main.c`).
-
-For example (STM32 HAL):
-
+take STM32 HAL for [example](./examples/stm32_hal/src/main.c):
 ```c
 /* main.c */
 
@@ -50,26 +45,12 @@ void as5047p_spi_deselect(void)
 }
 ```
 
-## License
-
-MIT License
-
-Copyright (c) 2022 ZiTe (honmonoh@gmail.com)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## AS5047P SPI Interface
+- Mode = 1 (CPOL = 0, CPHA = 1).
+    - Clock is low when idle.
+    - Data is sampled on the second edge (i.e. falling edge).
+- CSn(chip select) active low.
+- Data size is 16-bit.
+- Bit order is MSB first.
+- Max clock rates up to 10 MHz.
+- Only supports slave operation mode.
