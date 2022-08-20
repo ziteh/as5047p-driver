@@ -1,20 +1,24 @@
 # AS5047P Driver
-
 A library for [ams AS5047P](https://ams.com/as5047p) rotary position sensor/magnetic encoder.
 
-- `as5047p.c`
-- `as5047p.h`
+- `src/`: Main code.
+  - [`as5047p.c`](./src/as5047p.c)
+  - [`as5047p.h`](./src/as5047p.h)
+- `examples/`: Some examples of this library.
+  - [`stm32_hal/`](./examples/stm32_hal/)
 - `LICENSE`
-- `README.md` (*This file*)
-
+- `README.md` (*this file*)
 
 ## Usage
+The following functions that must be implemented in the user file (e.g. `main.c`).
+```c
+void as5047p_spi_send(uint16_t data);
+uint16_t as5047p_spi_read(void);
+void as5047p_spi_select(void);
+void as5047p_spi_deselect(void);
+```
 
-[STM32 Example](https://github.com/ziteh/as5047p-example)
-
-There are some functions that must be implemented in the user file (e.g. `main.c`).
-
-Take STM32 HAL for example:
+take STM32 HAL for [example](./examples/stm32_hal/src/main.c):
 ```c
 /* main.c */
 
@@ -41,9 +45,7 @@ void as5047p_spi_deselect(void)
 }
 ```
 
-
 ## AS5047P SPI Interface
-
 - Mode = 1 (CPOL = 0, CPHA = 1).
     - Clock is low when idle.
     - Data is sampled on the second edge (i.e. falling edge).
