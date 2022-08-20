@@ -1,0 +1,17 @@
+{
+  "name": "as5047-driver",
+  "version": "1.1.2",
+  "description": "AS5047P rotary position sensor library",
+  "keywords": "stm32, as5047, sensors",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ziteh/as5047p-driver.git"
+  },
+  "authors": {
+    "name": "ZiTe",
+    "email": "honmonoh@gmail.com"
+  },
+  "license": "MIT License",
+  "frameworks": "*",
+  "platforms": "*"
+}
