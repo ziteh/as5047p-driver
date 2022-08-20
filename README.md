@@ -45,6 +45,8 @@ void as5047p_spi_deselect(void)
 }
 ```
 
+[My blog](https://ziteh.github.io/2022/04/learningstm32-as5047p/)(Chinese) has more detailed descriptions.
+
 ## AS5047P SPI Interface
 - Mode = 1 (CPOL = 0, CPHA = 1).
     - Clock is low when idle.
