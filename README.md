@@ -1,4 +1,8 @@
 # AS5047P Driver
+[![GitHub](https://img.shields.io/github/license/ziteh/as5047p-driver)](./LICENSE)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/ziteh/as5047p-driver)](https://github.com/ziteh/as5047p-driver/releases)
+[![PlatformIO Registry](https://badges.registry.platformio.org/packages/ziteh/library/as5047-driver.svg)](https://registry.platformio.org/libraries/ziteh/as5047-driver)
+
 A platform independent library for [ams AS5047P](https://ams.com/as5047p) rotary position sensor/magnetic encoder.
 
 - `src/`: Main code.
