@@ -23,11 +23,18 @@
 
 SPI_HandleTypeDef hspi1;
 UART_HandleTypeDef huart2;
+as5047p_handle_t as5047p;
 
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI1_Init(void);
+
+void as5047p_spi_send(uint16_t data);
+uint16_t as5047p_spi_read(void);
+void as5047p_spi_select(void);
+void as5047p_spi_deselect(void);
+void as5047p_delay(void);
 
 int main(void)
 {
@@ -39,27 +46,24 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
 
-  as5047p_init(0b00100101, 0b00000000);
-  as5047p_set_zero(0);
+  as5047p_make_handle(&as5047p_spi_send,
+                      &as5047p_spi_read,
+                      &as5047p_spi_select,
+                      &as5047p_spi_deselect,
+                      &as5047p_delay,
+                      &as5047p);
+
+  as5047p_config(&as5047p, 0b00100101, 0b00000000);
+  as5047p_set_zero(&as5047p, 0);
 
   printf("\r\nSTM32-AS5047P, Ready\r\n");
 
   while (1)
   {
-    /* Measured angle without dynamic angle error compensation. */
-    uint16_t pos = as5047p_read_data(AS5047P_ANGLEUNC) & 0x3FFF;
-
-    printf("Angle: %3i, Raw: %5i\r\n", (pos * 359 / 0x3FFF), pos);
+    float angle;
+    as5047p_get_angle(&as5047p, without_daec, &angle);
+    printf("Angle: %3i\r\n", (int)angle);
     HAL_Delay(200);
-  }
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if (GPIO_Pin == B1_Pin)
-  {
-    uint16_t position = as5047p_read_data(AS5047P_ANGLEUNC) & 0x3FFF;
-    as5047p_set_zero(position);
   }
 }
 
@@ -83,6 +87,22 @@ void as5047p_spi_select(void)
 void as5047p_spi_deselect(void)
 {
   HAL_GPIO_WritePin(AS5047P_SS_GPIO_Port, AS5047P_SS_Pin, GPIO_PIN_SET);
+}
+
+void as5047p_delay(void)
+{
+  HAL_Delay(1);
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == B1_Pin)
+  {
+    /* Set current position as zero. */
+    uint16_t position;
+    as5047p_get_position(&as5047p, without_daec, &position);
+    as5047p_set_zero(&as5047p, position);
+  }
 }
 
 /**

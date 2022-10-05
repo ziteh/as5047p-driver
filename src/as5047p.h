@@ -15,8 +15,8 @@
  *
  */
 
-#ifndef __AS5047P_H
-#define __AS5047P_H
+#ifndef AS5047P_H
+#define AS5047P_H
 
 #ifdef __cplusplus
 extern "C"
@@ -24,46 +24,62 @@ extern "C"
 #endif
 
 #include <stdint.h>
-#include <stdbool.h>
 
-/* Volatile register address. */
-#define AS5047P_NOP ((uint16_t)0x0000)
-#define AS5047P_ERRFL ((uint16_t)0x0001)
-#define AS5047P_PROG ((uint16_t)0x0003)
-#define AS5047P_DIAAGC ((uint16_t)0x3FFC)
-#define AS5047P_MAG ((uint16_t)0x3FFD)
-#define AS5047P_ANGLEUNC ((uint16_t)0x3FFE)
-#define AS5047P_ANGLECOM ((uint16_t)0x3FFF)
+  typedef void (*as5047p_spi_send_t)(uint16_t data);
+  typedef uint16_t (*as5047p_spi_read_t)(void);
+  typedef void (*as5047p_spi_select_t)(void);
+  typedef void (*as5047p_spi_deselect_t)(void);
 
-/* Non-Volatile register address. */
-#define AS5047P_ZPOSM ((uint16_t)0x0016)
-#define AS5047P_ZPOSL ((uint16_t)0x0017)
-#define AS5047P_SETTINGS1 ((uint16_t)0x0018)
-#define AS5047P_SETTINGS2 ((uint16_t)0x0019)
+  /**
+   * @brief t_CSn: High time of CSn between two transmissions, Min: 350 ns.
+   */
+  typedef void (*as5047p_delay_t)(void);
 
-#define AS5047P_STEEINGS1_DEFAULT ((uint8_t)0x00000001)
-#define AS5047P_STEEINGS2_DEFAULT ((uint8_t)0x00000000)
+  /**
+   * @brief Dynamic angle error compensation (DAEC).
+   */
+  typedef enum
+  {
+    without_daec = 0,
+    with_daec = !without_daec
+  } as5047p_daec_t;
 
-/* t_CSn: High time of CSn between two transmissions, Min: 350 ns. */
-#define T_CSN_DELAY (5)
+  typedef struct
+  {
+    as5047p_spi_send_t spi_send;
+    as5047p_spi_read_t spi_read;
+    as5047p_spi_select_t spi_select;
+    as5047p_spi_deselect_t spi_deselect;
+    as5047p_delay_t delay;
+  } as5047p_handle_t;
 
-  void as5047p_spi_send(uint16_t data);
-  uint16_t as5047p_spi_read(void);
-  void as5047p_spi_select(void);
-  void as5047p_spi_deselect(void);
+  int8_t as5047p_make_handle(as5047p_spi_send_t spi_send_func,
+                             as5047p_spi_read_t spi_read_func,
+                             as5047p_spi_deselect_t spi_select_func,
+                             as5047p_spi_deselect_t spi_deselect_func,
+                             as5047p_delay_t delay_func,
+                             as5047p_handle_t *as5047p_handle);
 
-  void as5047p_send_command(bool is_read_cmd, uint16_t address);
-  void as5047p_send_data(uint16_t address, uint16_t data);
-  uint16_t as5047p_read_data(uint16_t address);
+  void as5047p_reset(const as5047p_handle_t *as5047p_handle);
 
-  int as5047p_init(uint8_t settings1, uint8_t settings2);
-  int as5047p_get_angle(bool with_daec, float *angle_degree);
-  void as5047p_set_zero(uint16_t position);
+  void as5047p_config(const as5047p_handle_t *as5047p_handle,
+                      uint8_t settings1,
+                      uint8_t settings2);
 
-  void as5047p_nop(void);
+  void as5047p_set_zero(const as5047p_handle_t *as5047p_handle, uint16_t position);
+
+  int8_t as5047p_get_position(const as5047p_handle_t *as5047p_handle,
+                              as5047p_daec_t with_daec,
+                              uint16_t *position);
+
+  int8_t as5047p_get_angle(const as5047p_handle_t *as5047p_handle,
+                           as5047p_daec_t with_daec,
+                           float *angle_degree);
+
+  uint16_t as5047p_get_error_status(const as5047p_handle_t *as5047p_handle);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __AS5047P_H */
+#endif /* AS5047P_H */
