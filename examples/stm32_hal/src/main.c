@@ -46,16 +46,12 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI1_Init();
 
-  int8_t sta = as5047p_make_handle(&as5047p_spi_send,
-                                   &as5047p_spi_read,
-                                   &as5047p_spi_select,
-                                   &as5047p_spi_deselect,
-                                   &as5047p_delay,
-                                   &as5047p);
-  if (sta != 0)
-  {
-    return -1;
-  }
+  as5047p_make_handle(&as5047p_spi_send,
+                      &as5047p_spi_read,
+                      &as5047p_spi_select,
+                      &as5047p_spi_deselect,
+                      &as5047p_delay,
+                      &as5047p);
 
   as5047p_config(&as5047p, 0b00100101, 0b00000000);
   as5047p_set_zero(&as5047p, 0);
