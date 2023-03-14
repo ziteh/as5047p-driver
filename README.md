@@ -96,17 +96,23 @@ as5047p_set_zero(&as5047p, 0);
 Read angle in degree:
 ```c
 float angle_deg;
-as5047p_get_angle(&as5047p, without_daec, &angle_deg);
+int8_t error = as5047p_get_angle(&as5047p, without_daec, &angle_deg);
 
-printf("Angle: %f\r\n", angle_deg);
+if (error == 0)
+{
+    printf("Angle: %f\r\n", angle_deg);
+}
 ```
 
 Read raw position:
 ```c
 uint16_t position;
-as5047p_get_position(&as5047p, without_daec, &position);
+int8_t error = as5047p_get_position(&as5047p, without_daec, &position);
 
-printf("Raw: %5i\r\n", position);
+if (error == 0)
+{
+    printf("Raw: %5i\r\n", position);
+}
 ```
 
 ## Examples
