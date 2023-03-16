@@ -203,9 +203,9 @@ void as5047p_spi_send(uint16_t data)
 uint16_t as5047p_spi_read(void)
 {
   spi_send(SPI1, 0);                  /* Just for beget clock signal. */
-  while ((SPI_SR(SPI1) & SPI_SR_BSY)) /* Wait for 'Busy' flag to reset. */
-  {
-  }
+  // while ((SPI_SR(SPI1) & SPI_SR_BSY)) /* Wait for 'Busy' flag to reset. */
+  // {
+  // }
 
   uint16_t data = spi_read(SPI1);
   while ((SPI_SR(SPI1) & SPI_SR_BSY)) /* Wait for 'Busy' flag to reset. */
