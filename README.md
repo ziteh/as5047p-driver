@@ -1,4 +1,5 @@
 # AS5047P Driver
+
 [![GitHub](https://img.shields.io/github/license/ziteh/as5047p-driver)](./LICENSE)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/ziteh/as5047p-driver)](https://github.com/ziteh/as5047p-driver/releases)
 [![PlatformIO Registry](https://badges.registry.platformio.org/packages/ziteh/library/as5047-driver.svg)](https://registry.platformio.org/libraries/ziteh/as5047-driver)
@@ -15,11 +16,12 @@ A platform independent library for [ams AS5047P](https://ams.com/as5047p) rotary
 ## Usage
 
 ### Install
+
 There are 3 ways to install:
 
 1. Go to VS Code > PIO Home > Libraries and search "as5047-driver", press the "Add to Project" button.
-
 2. Add `lib_deps = ziteh/as5047-driver@^2.0.0` in `platformio.ini` file, for example:
+
 ```ini
 [env:nucleo_f446re]
 platform = ststm32
@@ -31,12 +33,15 @@ lib_deps = ziteh/as5047-driver@^2.0.0
 3. PIO CLI: `pio pkg install --library "ziteh/as5047-driver@^2.0.0"`.
 
 ### Writing the Code
-Include 
+
+Include
+
 ```c
 #include <as5047p.h>
 ```
 
 The following functions that must be implemented in the user file (e.g. `main.c`), function names are free:
+
 ```c
 void as5047p_spi_send(uint16_t data);
 uint16_t as5047p_spi_read(void);
@@ -46,6 +51,7 @@ void as5047p_delay(void)
 ```
 
 Take STM32 HAL for example:
+
 ```c
 void as5047p_spi_send(uint16_t data)
 {
@@ -77,6 +83,7 @@ void as5047p_delay(void)
 ```
 
 Make handle and init:
+
 ```c
 as5047p_handle_t as5047p;
 as5047p_make_handle(&as5047p_spi_send,
@@ -94,6 +101,7 @@ as5047p_set_zero(&as5047p, 0);
 ```
 
 Read angle in degree:
+
 ```c
 float angle_deg;
 int8_t error = as5047p_get_angle(&as5047p, without_daec, &angle_deg);
@@ -105,6 +113,7 @@ if (error == 0)
 ```
 
 Read raw position:
+
 ```c
 uint16_t position;
 int8_t error = as5047p_get_position(&as5047p, without_daec, &position);
@@ -115,15 +124,29 @@ if (error == 0)
 }
 ```
 
+Read magnet info
+
+```C
+as5047p_mag_info_t mag_info;
+if (as5047p_get_mag_diagnostics(&as5047p, &mag_info) == 0)
+{
+  printf("MAG=%u AGC=%u MAGH=%u MAGL=%u COF=%u\r\n",
+         mag_info.mag, mag_info.agc, mag_info.mag_high, mag_info.mag_low, mag_info.cof);
+}
+```
+
 ## Examples
-- STM32 HAL: [`examples/stm32_hal/src/main.c`](./examples/stm32_hal/src/main.c)  
+
+- STM32 HAL: [`examples/stm32_hal/src/main.c`](./examples/stm32_hal/src/main.c)
 - STM32 LibOpenCM3: [`examples/stm32_libopencm3/src/main.c`](./examples/stm32_libopencm3/src/main.c)
+
 > [My blog](https://ziteh.github.io/2022/04/learningstm32-as5047p/) (Chinese) has more detailed descriptions.
 
 ## AS5047P SPI Interface
+
 - SPI Mode = 1.
-    - CPOL = 0: Clock is low when idle.
-    - CPHA = 1: Data is sampled on the second edge (i.e. falling edge).
+  - CPOL = 0: Clock is low when idle.
+  - CPHA = 1: Data is sampled on the second edge (i.e. falling edge).
 - CS (chip select) pin active low.
 - Data size (data frame format) is 16-bit.
 - Bit order is MSB first.
