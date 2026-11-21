@@ -52,6 +52,15 @@ extern "C"
     as5047p_spi_deselect_t spi_deselect;
     as5047p_delay_t delay;
   } as5047p_handle_t;
+  typedef struct
+  {
+    uint16_t mag;     /* 14-bit CORDIC magnitude (0..16383) */
+    uint8_t agc;      /* Automatic gain control value (0..255) */
+    uint8_t mag_high; /* 1 if magnetic field strength is too high */
+    uint8_t mag_low;  /* 1 if magnetic field strength is too low */
+    uint8_t cof;      /* 1 if CORDIC overflow occurred */
+    uint8_t lf;       /* 1 if offset compensation finished */
+  } as5047p_mag_info_t;
 
   int8_t as5047p_make_handle(as5047p_spi_send_t spi_send_func,
                              as5047p_spi_read_t spi_read_func,
@@ -77,6 +86,12 @@ extern "C"
                            float *angle_degree);
 
   uint16_t as5047p_get_error_status(const as5047p_handle_t *as5047p_handle);
+
+  int8_t as5047p_get_magnitude(const as5047p_handle_t *as5047p_handle,
+                               uint16_t *magnitude);
+
+  int8_t as5047p_get_mag_diagnostics(const as5047p_handle_t *as5047p_handle,
+                                     as5047p_mag_info_t *info);
 
 #ifdef __cplusplus
 }

@@ -9,7 +9,7 @@
 #include "as5047p.h"
 
 #define BIT_MODITY(src, i, val) ((src) ^= (-(val) ^ (src)) & (1UL << (i)))
-#define BIT_READ(src, i) (((src) >> (i)&1U))
+#define BIT_READ(src, i) (((src) >> (i) & 1U))
 #define BIT_TOGGLE(src, i) ((src) ^= 1UL << (i))
 
 /* Volatile register address. */
@@ -304,4 +304,69 @@ uint8_t is_even_parity(uint16_t data)
     shift <<= 1;
   }
   return !(data & 0x1);
+}
+
+/**
+- @brief Read 14-bit CORDIC magnitude from MAG register (0x3FFD).
+ *
+- @param[in]  as5047p_handle AS5047P handle.
+- @param[out] magnitude      14-bit magnitude value (0..16383).
+- @return Status code.
+-         0: Success.
+-         -1: Error occurred.
+ */
+int8_t as5047p_get_magnitude(const as5047p_handle_t *as5047p_handle,
+                             uint16_t *magnitude)
+{
+  if ((as5047p_handle == NULL) || (magnitude == NULL))
+  {
+    return -1;
+  }
+
+  uint16_t data = as5047p_read_data(as5047p_handle, AS5047P_MAG);
+  if (BIT_READ(data, 14) == 0)
+  {
+    *magnitude = data & 0x3FFF;
+    return 0;
+  }
+  return -1;
+}
+
+/**
+- @brief Read magnetic strength & AGC diagnostics from DIAAGC (0x3FFC) and MAG (0x3FFD).
+ *
+- @param[in]  as5047p_handle AS5047P handle.
+- @param[out] info           Populated magnitude and AGC diagnostic fields.
+- @return Status code.
+-         0: Success.
+-         -1: Error occurred.
+ */
+int8_t as5047p_get_mag_diagnostics(const as5047p_handle_t *as5047p_handle,
+                                   as5047p_mag_info_t *info)
+{
+  if ((as5047p_handle == NULL) || (info == NULL))
+  {
+    return -1;
+  }
+
+  uint16_t diaagc = as5047p_read_data(as5047p_handle, AS5047P_DIAAGC);
+  if (BIT_READ(diaagc, 14) != 0)
+  {
+    return -1;
+  }
+
+  uint16_t mag = 0;
+  if (as5047p_get_magnitude(as5047p_handle, &mag) != 0)
+  {
+    return -1;
+  }
+
+  info->mag = mag;
+  info->agc = (uint8_t)(diaagc & 0x00FF);
+  info->mag_high = (uint8_t)BIT_READ(diaagc, 10);
+  info->mag_low = (uint8_t)BIT_READ(diaagc, 11);
+  info->cof = (uint8_t)BIT_READ(diaagc, 9);
+  info->lf = (uint8_t)BIT_READ(diaagc, 8);
+
+  return 0;
 }
